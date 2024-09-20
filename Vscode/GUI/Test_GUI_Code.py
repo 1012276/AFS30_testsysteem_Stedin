@@ -63,10 +63,13 @@ class TestSystemGUI:
         ttk.Button(self.main_frame, text="Start Test", command=self.send_settings).grid(row=8, column=1, pady=20, padx=20)
         ttk.Button(self.main_frame, text="Stop Test", command=self.stop_test).grid(row=8, column=2, pady=20, padx=20)
 
+        # Knop voor standaard testprocedure
+        ttk.Button(self.main_frame, text="Standaard Testprocedure", command=self.run_standard_test).grid(row=9, column=0, pady=20, padx=20)
+
         # Real-time weergave van data van het Nucleo-board
-        self.create_label(self.main_frame, "Real-time Data van Nucleo", 9, 0, font_size=16, colspan=3)
+        self.create_label(self.main_frame, "Real-time Data van Nucleo", 10, 0, font_size=16, colspan=3)
         self.data_display = tk.Text(self.main_frame, height=10, width=70)
-        self.data_display.grid(row=10, column=0, columnspan=3, padx=20, pady=20)
+        self.data_display.grid(row=11, column=0, columnspan=3, padx=20, pady=20)
 
     def create_thd_page_widgets(self, page, prefix):
         # RMS Stroom en harmonischen invoervelden, inclusief validatie voor RMS-stroom
@@ -80,56 +83,103 @@ class TestSystemGUI:
         ttk.Button(page, text="Opslaan", command=lambda: self.update_thd_summary(prefix)).grid(row=8, column=0, pady=20, padx=20)
 
     def create_validated_input(self, parent, label_text, row, col, name, for_current=False):
-        """
-        Creëer een invoerveld dat alleen geldige waarden accepteert.
-        Voor harmonische: 5-50%.
-        Voor stroom: 5-500 met een stapgrootte van één duizendste, komma toegestaan.
-        """
         label = tk.Label(parent, text=label_text)
         label.grid(row=row, column=col, padx=20, pady=10, sticky="w")
         entry = tk.Entry(parent, width=20)
         entry.grid(row=row, column=col+1, padx=20, pady=10)
+        entry.insert(0, "0")  # Vul het veld automatisch met 0
         entry.bind("<FocusOut>", lambda event, entry=entry: self.validate_input(entry, for_current))
         setattr(self, name, entry)
 
     def validate_input(self, entry, for_current):
-        """
-        Controleer of de invoer correct is. 
-        Voor harmonische: controleer of de waarde een geheel getal is tussen 5 en 50.
-        Voor stroom: controleer of de waarde een decimaal getal is tussen 5 en 500 met maximaal drie decimalen.
-        Gebruiker kan komma gebruiken in plaats van een punt.
-        """
         value = entry.get().replace(",", ".")  # Vervang komma door punt voor validatie
-        if value == "":
-            return True  # Leeg veld is toegestaan totdat de gebruiker het invult
+        if value == "":  # Laat lege velden als 0 behandelen
+            entry.insert(0, "0")
+            return True
 
         try:
             if for_current:
-                # Controleer voor stroom (bereik 5 - 500, maximaal drie decimalen)
                 value_float = float(value)
                 decimal_places = len(value.split(".")[1]) if "." in value else 0
                 if not (5 <= value_float <= 500) or decimal_places > 3:
                     raise ValueError
             else:
-                # Controleer voor harmonische (alleen gehele getallen tussen 5 - 50)
                 value_int = int(value)
                 if not (5 <= value_int <= 50):
                     raise ValueError
         except (ValueError, IndexError):
-            # Toon specifieke foutmeldingen afhankelijk van het type invoer
             if for_current:
                 messagebox.showerror("Ongeldige stroominvoer",
                                      "Voer een geldige stroomwaarde in.\nHet bereik moet tussen 5 en 500 Ampère RMS liggen, met maximaal 3 decimalen.")
             else:
                 messagebox.showerror("Ongeldige harmonische invoer",
                                      "Voer een geldig harmonisch percentage in.\nHet percentage moet tussen 5 en 50% liggen en alleen hele getallen accepteren.")
-            entry.focus_set()  # Plaats de cursor terug in het veld
+            entry.focus_set()
             return False
 
+    def run_standard_test(self):
+        # Vul de standaard testprocedure in
+        self.Stroom_Scenario_1.delete(0, tk.END)
+        self.Stroom_Scenario_1.insert(0, "25")
+        self.Stroom_Scenario_2.delete(0, tk.END)
+        self.Stroom_Scenario_2.insert(0, "6.8")
+        self.Stroom_Scenario_3.delete(0, tk.END)
+        self.Stroom_Scenario_3.insert(0, "9186")
+
+        # THD Scenario 1
+        self.THD_Scenario_1_RMS.delete(0, tk.END)
+        self.THD_Scenario_1_RMS.insert(0, "20")
+        self.THD_Scenario_1_Harm_3.delete(0, tk.END)
+        self.THD_Scenario_1_Harm_3.insert(0, "15")
+        self.THD_Scenario_1_Harm_5.delete(0, tk.END)
+        self.THD_Scenario_1_Harm_5.insert(0, "20")
+        self.THD_Scenario_1_Harm_7.delete(0, tk.END)
+        self.THD_Scenario_1_Harm_7.insert(0, "10")
+        self.THD_Scenario_1_Harm_9.delete(0, tk.END)
+        self.THD_Scenario_1_Harm_9.insert(0, "8")
+        self.THD_Scenario_1_Harm_11.delete(0, tk.END)
+        self.THD_Scenario_1_Harm_11.insert(0, "6")
+        self.THD_Scenario_1_Harm_13.delete(0, tk.END)
+        self.THD_Scenario_1_Harm_13.insert(0, "5")
+
+        # THD Scenario 2
+        self.THD_Scenario_2_RMS.delete(0, tk.END)
+        self.THD_Scenario_2_RMS.insert(0, "20")
+        self.THD_Scenario_2_Harm_3.delete(0, tk.END)
+        self.THD_Scenario_2_Harm_3.insert(0, "15")
+        self.THD_Scenario_2_Harm_5.delete(0, tk.END)
+        self.THD_Scenario_2_Harm_5.insert(0, "5")
+        self.THD_Scenario_2_Harm_7.delete(0, tk.END)
+        self.THD_Scenario_2_Harm_7.insert(0, "0")  # Not defined, set to 0
+        self.THD_Scenario_2_Harm_9.delete(0, tk.END)
+        self.THD_Scenario_2_Harm_9.insert(0, "0")  # Not defined, set to 0
+        self.THD_Scenario_2_Harm_11.delete(0, tk.END)
+        self.THD_Scenario_2_Harm_11.insert(0, "0")  # Not defined, set to 0
+        self.THD_Scenario_2_Harm_13.delete(0, tk.END)
+        self.THD_Scenario_2_Harm_13.insert(0, "0")  # Not defined, set to 0
+
+        # THD Scenario 3
+        self.THD_Scenario_3_RMS.delete(0, tk.END)
+        self.THD_Scenario_3_RMS.insert(0, "20")
+        self.THD_Scenario_3_Harm_3.delete(0, tk.END)
+        self.THD_Scenario_3_Harm_3.insert(0, "30")
+        self.THD_Scenario_3_Harm_5.delete(0, tk.END)
+        self.THD_Scenario_3_Harm_5.insert(0, "5")
+        self.THD_Scenario_3_Harm_7.delete(0, tk.END)
+        self.THD_Scenario_3_Harm_7.insert(0, "10")
+        self.THD_Scenario_3_Harm_9.delete(0, tk.END)
+        self.THD_Scenario_3_Harm_9.insert(0, "0")  # Not defined, set to 0
+        self.THD_Scenario_3_Harm_11.delete(0, tk.END)
+        self.THD_Scenario_3_Harm_11.insert(0, "0")  # Not defined, set to 0
+        self.THD_Scenario_3_Harm_13.delete(0, tk.END)
+        self.THD_Scenario_3_Harm_13.insert(0, "0")  # Not defined, set to 0
+
+        # Verstuur automatisch de instellingen
+        self.send_settings()
+
     def update_thd_summary(self, prefix):
-        # Lees de waarden van de THD invoervelden
         try:
-            rms = float(getattr(self, f"{prefix}_RMS").get().replace(",", "."))  # Komma vervangen door punt
+            rms = float(getattr(self, f"{prefix}_RMS").get().replace(",", "."))
         except ValueError:
             messagebox.showerror("Ongeldige invoer", "Voer een geldig getal in voor de RMS Stroom.")
             return
@@ -143,10 +193,7 @@ class TestSystemGUI:
                 messagebox.showerror("Ongeldige invoer", f"Voer een geldig percentage in voor de {harmonic}e harmonische.")
                 return
 
-        # Maak de samenvattingstekst
         summary_text = f"Stroom L1, L2, L3: {rms} A; THD% = ({', '.join(harmonic_values)})"
-
-        # Update de juiste samenvatting op de hoofdpagina
         if "Scenario_1" in prefix:
             self.thd_summary_1.config(text=summary_text)
         elif "Scenario_2" in prefix:
@@ -154,16 +201,7 @@ class TestSystemGUI:
         elif "Scenario_3" in prefix:
             self.thd_summary_3.config(text=summary_text)
 
-    def create_label(self, parent, text, row, col, font_size=12, colspan=1):
-        label = tk.Label(parent, text=text, font=("Arial", font_size))
-        label.grid(row=row, column=col, padx=20, pady=10, columnspan=colspan)
-        return label
-
     def send_settings(self):
-        """
-        Verzamelt alle stroom- en THD-instellingen en verzendt ze naar de STM32 via de seriële poort.
-        """
-        # Lees de stroomwaarden van alle scenario's
         try:
             stroom_scenario_1 = float(self.Stroom_Scenario_1.get().replace(",", "."))
             stroom_scenario_2 = float(self.Stroom_Scenario_2.get().replace(",", "."))
@@ -172,7 +210,6 @@ class TestSystemGUI:
             messagebox.showerror("Ongeldige invoer", "Voer een geldige stroomwaarde in voor alle scenario's.")
             return
 
-        # Lees de THD-waarden van de drie scenario's
         try:
             thd_1_rms = float(self.THD_Scenario_1_RMS.get().replace(",", "."))
             thd_1_harmonics = [int(self.THD_Scenario_1_Harm_3.get()), int(self.THD_Scenario_1_Harm_5.get()),
@@ -192,7 +229,6 @@ class TestSystemGUI:
             messagebox.showerror("Ongeldige invoer", "Voer geldige THD-waarden in voor alle scenario's.")
             return
 
-        # Formatteer de gegevens om te verzenden via de seriële poort
         data = f"STROOM_S1={stroom_scenario_1:.3f};STROOM_S2={stroom_scenario_2:.3f};STROOM_S3={stroom_scenario_3:.3f};"
         data += f"THD_S1_RMS={thd_1_rms:.3f};THD_S1_3H={thd_1_harmonics[0]};THD_S1_5H={thd_1_harmonics[1]};"
         data += f"THD_S1_7H={thd_1_harmonics[2]};THD_S1_9H={thd_1_harmonics[3]};THD_S1_11H={thd_1_harmonics[4]};THD_S1_13H={thd_1_harmonics[5]};"
@@ -201,12 +237,11 @@ class TestSystemGUI:
         data += f"THD_S3_RMS={thd_3_rms:.3f};THD_S3_3H={thd_3_harmonics[0]};THD_S3_5H={thd_3_harmonics[1]};"
         data += f"THD_S3_7H={thd_3_harmonics[2]};THD_S3_9H={thd_3_harmonics[3]};THD_S3_11H={thd_3_harmonics[4]};THD_S3_13H={thd_3_harmonics[5]};\n"
 
-        # Verstuur gegevens via seriële poort
         ser.write(data.encode())
         print(f"Verzonden gegevens: {data}")
 
     def stop_test(self):
-        ser.write(b"STOP\n")  # Verstuur stopcommando naar STM32
+        ser.write(b"STOP\n")
 
     def read_from_serial(self):
         while True:
