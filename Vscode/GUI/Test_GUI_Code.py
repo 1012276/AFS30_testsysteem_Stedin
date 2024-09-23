@@ -89,38 +89,52 @@ class TestSystemGUI:
         ttk.Button(page, text="Opslaan", command=lambda: self.update_thd_summary(prefix)).grid(row=8, column=0, pady=20, padx=20)
 
     def create_validated_input(self, parent, label_text, row, col, name, for_current=False):
-        label = tk.Label(parent, text=label_text)
-        label.grid(row=row, column=col, padx=20, pady=10, sticky="w")
-        entry = tk.Entry(parent, width=20)
-        entry.grid(row=row, column=col+1, padx=20, pady=10)
-        entry.insert(0, "0")  # Vul het veld automatisch met 0
-        entry.bind("<FocusOut>", lambda event, entry=entry: self.validate_input(entry, for_current))
-        setattr(self, name, entry)
+            """
+            Creëer een invoerveld dat alleen geldige waarden accepteert.
+            Voor harmonische: 5-50%.
+            Voor stroom: 5-500 met een stapgrootte van één duizendste, komma toegestaan.
+            """
+            label = tk.Label(parent, text=label_text)
+            label.grid(row=row, column=col, padx=20, pady=10, sticky="w")
+            entry = tk.Entry(parent, width=20)
+            entry.grid(row=row, column=col+1, padx=20, pady=10)
+            # Zorg ervoor dat de standaardwaarde 0 is
+            entry.insert(0, "0")
+
+            entry.bind("<FocusOut>", lambda event, entry=entry: self.validate_input(entry, for_current))
+            setattr(self, name, entry)
 
     def validate_input(self, entry, for_current):
+        """
+        Controleer of de invoer correct is. 
+        Voor harmonische: controleer of de waarde een geheel getal is tussen 5 en 50.
+        Voor stroom: controleer of de waarde een decimaal getal is tussen 5 en 500 met maximaal drie decimalen.
+        Gebruiker kan komma gebruiken in plaats van een punt.
+        """
         value = entry.get().replace(",", ".")  # Vervang komma door punt voor validatie
-        if value == "":  # Laat lege velden als 0 behandelen
-            entry.insert(0, "0")
-            return True
-
+        if value == "":
+            return True  # Leeg veld is toegestaan totdat de gebruiker het invult
         try:
             if for_current:
+                # Controleer voor stroom (bereik 5 - 500, maximaal drie decimalen)
                 value_float = float(value)
                 decimal_places = len(value.split(".")[1]) if "." in value else 0
-                if not (5 <= value_float <= 500) or decimal_places > 3:
+                if value_float != 0 and (not (5 <= value_float <= 500) or decimal_places > 3):
                     raise ValueError
             else:
+                # Controleer voor harmonische (alleen gehele getallen tussen 5 - 50)
                 value_int = int(value)
-                if not (5 <= value_int <= 50):
+                if value_int != 0 and not (5 <= value_int <= 50):
                     raise ValueError
         except (ValueError, IndexError):
+            # Toon specifieke foutmeldingen afhankelijk van het type invoer
             if for_current:
                 messagebox.showerror("Ongeldige stroominvoer",
                                      "Voer een geldige stroomwaarde in.\nHet bereik moet tussen 5 en 500 Ampère RMS liggen, met maximaal 3 decimalen.")
             else:
                 messagebox.showerror("Ongeldige harmonische invoer",
                                      "Voer een geldig harmonisch percentage in.\nHet percentage moet tussen 5 en 50% liggen en alleen hele getallen accepteren.")
-            entry.focus_set()
+            entry.focus_set()  # Plaats de cursor terug in het veld
             return False
 
     def run_standard_test(self):
@@ -128,9 +142,9 @@ class TestSystemGUI:
         self.Stroom_Scenario_1.delete(0, tk.END)
         self.Stroom_Scenario_1.insert(0, "25")
         self.Stroom_Scenario_2.delete(0, tk.END)
-        self.Stroom_Scenario_2.insert(0, "6.8")
+        self.Stroom_Scenario_2.insert(0, "6,8")
         self.Stroom_Scenario_3.delete(0, tk.END)
-        self.Stroom_Scenario_3.insert(0, "9.186")
+        self.Stroom_Scenario_3.insert(0, "9,186")
 
         # THD Scenario 1
         self.THD_Scenario_1_RMS.delete(0, tk.END)
