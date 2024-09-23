@@ -42,6 +42,12 @@ class TestSystemGUI:
         self.read_thread = threading.Thread(target=self.read_from_serial, daemon=True)
         self.read_thread.start()
 
+    def create_label(self, parent, text, row, col, font_size=10, colspan=1):
+        label = tk.Label(parent, text=text, font=("Arial", font_size))
+        label.grid(row=row, column=col, columnspan=colspan, padx=10, pady=10, sticky="w")
+        return label
+
+
     def create_main_frame_widgets(self):
         # Stroom Test Scenario's - één veld voor L1, L2, L3 per scenario
         self.create_label(self.main_frame, "Stroom Test Scenario's", 0, 0, font_size=16, colspan=2)
@@ -124,7 +130,7 @@ class TestSystemGUI:
         self.Stroom_Scenario_2.delete(0, tk.END)
         self.Stroom_Scenario_2.insert(0, "6.8")
         self.Stroom_Scenario_3.delete(0, tk.END)
-        self.Stroom_Scenario_3.insert(0, "9186")
+        self.Stroom_Scenario_3.insert(0, "9.186")
 
         # THD Scenario 1
         self.THD_Scenario_1_RMS.delete(0, tk.END)
@@ -142,6 +148,9 @@ class TestSystemGUI:
         self.THD_Scenario_1_Harm_13.delete(0, tk.END)
         self.THD_Scenario_1_Harm_13.insert(0, "5")
 
+        # Update samenvatting voor THD Scenario 1
+        self.update_thd_summary("THD_Scenario_1")
+
         # THD Scenario 2
         self.THD_Scenario_2_RMS.delete(0, tk.END)
         self.THD_Scenario_2_RMS.insert(0, "20")
@@ -157,6 +166,9 @@ class TestSystemGUI:
         self.THD_Scenario_2_Harm_11.insert(0, "0")  # Not defined, set to 0
         self.THD_Scenario_2_Harm_13.delete(0, tk.END)
         self.THD_Scenario_2_Harm_13.insert(0, "0")  # Not defined, set to 0
+
+        # Update samenvatting voor THD Scenario 2
+        self.update_thd_summary("THD_Scenario_2")
 
         # THD Scenario 3
         self.THD_Scenario_3_RMS.delete(0, tk.END)
@@ -174,8 +186,12 @@ class TestSystemGUI:
         self.THD_Scenario_3_Harm_13.delete(0, tk.END)
         self.THD_Scenario_3_Harm_13.insert(0, "0")  # Not defined, set to 0
 
+        # Update samenvatting voor THD Scenario 3
+        self.update_thd_summary("THD_Scenario_3")
+
         # Verstuur automatisch de instellingen
         self.send_settings()
+
 
     def update_thd_summary(self, prefix):
         try:
