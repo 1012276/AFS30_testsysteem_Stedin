@@ -45,6 +45,11 @@ class TestSystemGUI:
         self.status_bar = tk.Label(self.root, text="Status: wachten op initialisatie testsyteem", bd=1, relief=tk.SUNKEN, anchor=tk.W)
         self.status_bar.pack(side=tk.BOTTOM, fill=tk.X)
 
+        # Label voor actief scenario
+        self.active_scenario_label = tk.Label(self.root, text="Actief Scenario: Wachten op start", font=("Arial", 12), bg="lightgray")
+        self.active_scenario_label.pack(pady=10)
+
+
         # Start een aparte thread om data van het Nucleo-bord te lezen
         if self.ser:
             self.read_thread = threading.Thread(target=self.read_from_serial, daemon=True)
@@ -295,9 +300,32 @@ class TestSystemGUI:
             self.status_bar.config(text="✅ Status: Voltooid", bg="dark green", fg="white")
 
         messagebox.showinfo("Status Update", f"Het testsysteem is nu {status}.")
+    def update_active_scenario(self, scenario):
+        """Update het actieve testscenario op de GUI en markeer het visueel"""
+        # Update het actieve scenario label
+        self.active_scenario_label.config(text=f"Actief Scenario: {scenario}", bg="yellow", fg="black")
+
+        # Start knipperend effect voor visuele aandacht
+        self.blink_active_scenario()
+
+        # Toon een pop-up melding voor de gebruiker
+        messagebox.showinfo("Nieuw Testscenario", f"Nieuw testscenario gestart: {scenario}")
+
+    def blink_active_scenario(self, count=0):
+        ## Laat het label knipperen om de gebruiker te attenderen op een nieuw scenario.
+        if count < 6:  # Laat het label 3 keer knipperen
+            current_bg = self.active_scenario_label.cget("bg")
+            next_bg = "red" if current_bg == "yellow" else "yellow"
+            self.active_scenario_label.config(bg=next_bg)
+            # Na 500ms opnieuw de kleur veranderen
+            self.root.after(500, self.blink_active_scenario, count + 1)
+        else:
+            # Zet de kleur na het knipperen weer terug naar standaard
+            self.active_scenario_label.config(bg="lightgray")
+    
 
     def read_from_serial(self):
-        """Lees de data van het Nucleo-bord en update de GUI-status"""
+        #Lees de data van het Nucleo-bord en update de GUI-status
         while True:
             if self.ser and self.ser.in_waiting > 0:
                 try:
@@ -317,6 +345,9 @@ class TestSystemGUI:
                         self.update_status("gestopt")    
                     elif line == "VOLTOOID":
                         self.update_status("voltooid")
+                    elif line.startswith("ACTIEF_SCENARIO"):
+                        scenario_nummer = line.split("=")[-1]
+                        self.update_active_scenario(f"Scenario {scenario_nummer}")
 
                 except Exception as e:
                     print(f"Fout bij het lezen van seriële data: {e}")

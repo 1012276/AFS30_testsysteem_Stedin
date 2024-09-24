@@ -50,6 +50,7 @@
 #define TEST_PAUSED "GEPAUZEERD"
 #define TEST_COMPLETED "VOLTOOID"
 #define TEST_STOPPED "GESTOPT"
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -86,6 +87,9 @@ int thd_s2_3h, thd_s2_5h, thd_s2_7h, thd_s2_9h, thd_s2_11h, thd_s2_13h;  // Onev
 // Globale variabelen voor THD scenario 3
 float thd_s3_rms;  // RMS stroom voor THD scenario 3
 int thd_s3_3h, thd_s3_5h, thd_s3_7h, thd_s3_9h, thd_s3_11h, thd_s3_13h;  // Oneven harmonischen voor THD scenario 3
+int start_testprocedure;
+
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -122,13 +126,12 @@ static void MX_USART3_UART_Init(void);
 /* USER CODE BEGIN 4 */
 
 // Functie om status door te geven via USB
-
-void non_blocking_delay(uint32_t delay_ms) {
-    uint32_t startTick = HAL_GetTick();
-    while((HAL_GetTick() - startTick) < delay_ms) {
-        // Tijdens het wachten kunnen USB-interrupts worden afgehandeld
-    }
+void send_active_scenario_to_gui(int scenario_number) {
+    char scenario_message[64];
+    sprintf(scenario_message, "ACTIEF_SCENARIO=%d\n", scenario_number);
+    send_status_to_gui(scenario_message);
 }
+
 
 void send_status_to_gui(char* status_message) {
     CDC_Transmit_FS((uint8_t *)status_message, strlen(status_message));
@@ -140,7 +143,9 @@ void send_status_to_gui(char* status_message) {
 // Simuleer de ontvangst van instellingen en stuur statusupdates naar de GUI
 void receive_settings_and_update_status(void) {
     // Wachten op instellingen
+
     send_status_to_gui(WAITING_FOR_SETTINGS);
+
 
     // Simuleer een vertraging voor het ontvangen van instellingen
 
@@ -151,7 +156,21 @@ void receive_settings_and_update_status(void) {
 // Functie om de volledige testprocedure te beheren
 void run_test_procedure(void) {
     // Start de testprocedure
-    send_status_to_gui(TEST_RUNNING);
+
+	if (start_testprocedure== 1){
+		send_status_to_gui(TEST_RUNNING);
+	    for (int scenario = 1; scenario <= 3; scenario++) {
+	        // Stuur het actieve scenario naar de GUI
+	        send_active_scenario_to_gui(scenario);
+
+	        // Simuleer een vertraging tijdens het draaien van dit scenario
+	        HAL_Delay(5000);  // 5 seconden per scenario
+	    }
+
+	    // Eindig met het versturen van de voltooid-status
+	    send_status_to_gui(TEST_COMPLETED);
+
+	}
 
     // Simuleer het uitvoeren van de test
 
@@ -185,6 +204,7 @@ void parse_received_data(char* data)
 
 
 	send_status_to_gui(READY_STATUS);
+	start_testprocedure= 1;
 
 }
 /* USER CODE END 0 */
@@ -241,7 +261,7 @@ int main(void)
 
   /////// KLOK FREQEUNTIE OP 8 MHZ zetten////
   /////// KLOK FREQEUNTIE OP 8 MHZ zetten voor nucleo board////
-
+  start_testprocedure=0;
   while (!(HAL_GPIO_ReadPin(GPIO_PORT_VBUS, GPIO_PIN_VBUS) == GPIO_PIN_SET));
 //      // VBUS is present, USB can be initialized
 
@@ -267,8 +287,8 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-
-
+	  run_test_procedure();
+	  HAL_Delay(4000);
 
     /* USER CODE END WHILE */
 
