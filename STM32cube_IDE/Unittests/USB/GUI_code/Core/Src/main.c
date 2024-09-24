@@ -36,7 +36,20 @@
 /* USER CODE BEGIN PD */
 #define GPIO_PORT_VBUS GPIOA   // De GPIO-poort voor VBUS (bijv. GPIOA)
 #define GPIO_PIN_VBUS  GPIO_PIN_9   // De specifieke pin (bijv. pin 9 op GPIOA)
+//#define BUFFER_SIZE 1024   // Vergroot de buffer naar 512 karakters
+//#define WAITING_FOR_SETTINGS "STATUS: Wachten op instellingen\r\n"
+//#define READY_STATUS "STATUS: Gereed\r\n"
+//#define TEST_RUNNING "STATUS: Bezig met testprocedure\r\n"
+//#define TEST_PAUSED "STATUS: Gepauzeerd\r\n"
+//#define TEST_COMPLETED "STATUS: Voltooid\r\n"
+
 #define BUFFER_SIZE 1024   // Vergroot de buffer naar 512 karakters
+#define WAITING_FOR_SETTINGS "WACHT_OP_INSTELLINGEN"
+#define READY_STATUS "GEREED"
+#define TEST_RUNNING "BEZIG_MET_TEST"
+#define TEST_PAUSED "GEPAUZEERD"
+#define TEST_COMPLETED "VOLTOOID"
+#define TEST_STOPPED "GESTOPT"
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -102,7 +115,47 @@ static void MX_USART3_UART_Init(void);
 //  }
 //
 //}
+/* USER CODE BEGIN PD */
 
+/* USER CODE END PD */
+
+/* USER CODE BEGIN 4 */
+
+// Functie om status door te geven via USB
+
+void non_blocking_delay(uint32_t delay_ms) {
+    uint32_t startTick = HAL_GetTick();
+    while((HAL_GetTick() - startTick) < delay_ms) {
+        // Tijdens het wachten kunnen USB-interrupts worden afgehandeld
+    }
+}
+
+void send_status_to_gui(char* status_message) {
+    CDC_Transmit_FS((uint8_t *)status_message, strlen(status_message));
+}
+
+// Functie om te checken of de knoppen voor starten, pauzeren of stoppen zijn ingedrukt
+
+
+// Simuleer de ontvangst van instellingen en stuur statusupdates naar de GUI
+void receive_settings_and_update_status(void) {
+    // Wachten op instellingen
+    send_status_to_gui(WAITING_FOR_SETTINGS);
+
+    // Simuleer een vertraging voor het ontvangen van instellingen
+
+    // Zodra instellingen zijn ontvangen, stuur de status "Gereed"
+
+}
+
+// Functie om de volledige testprocedure te beheren
+void run_test_procedure(void) {
+    // Start de testprocedure
+    send_status_to_gui(TEST_RUNNING);
+
+    // Simuleer het uitvoeren van de test
+
+}
 void CheckReceivedData(void)
 {
   // Simuleer het ontvangen van data (normaliter via USB/UART)
@@ -130,11 +183,9 @@ void parse_received_data(char* data)
            &thd_s2_rms, &thd_s2_3h, &thd_s2_5h, &thd_s2_7h, &thd_s2_9h, &thd_s2_11h, &thd_s2_13h,
            &thd_s3_rms, &thd_s3_3h, &thd_s3_5h, &thd_s3_7h, &thd_s3_9h, &thd_s3_11h, &thd_s3_13h);
 
-//    // Debug output om te controleren of de gegevens correct zijn opgeslagen
-    char buffer_1[100];
-//    sprintf(buffer_1, "Stroom Scenario 1: %.3f A\n", stroom_s1);
 
-    // Voeg hier logica toe om de DAC aan te sturen met de ontvangen gegevens
+	send_status_to_gui(READY_STATUS);
+
 }
 /* USER CODE END 0 */
 
@@ -193,13 +244,22 @@ int main(void)
 
   while (!(HAL_GPIO_ReadPin(GPIO_PORT_VBUS, GPIO_PIN_VBUS) == GPIO_PIN_SET));
 //      // VBUS is present, USB can be initialized
-//  HAL_Delay(1000);
 
-  for (int var = 0; var <12; ++var) {
- 	    CDC_Transmit_FS((uint8_t *)data,strlen (data));
- 	    HAL_Delay(1000);
-
- }
+ // simulatie tesprocedure met alle statussen
+  HAL_Delay(2000);
+  receive_settings_and_update_status();
+//  HAL_Delay(6000);
+//  send_status_to_gui(READY_STATUS);
+//  HAL_Delay(5000);
+//  run_test_procedure();
+//  HAL_Delay(5000);
+//  send_status_to_gui(TEST_PAUSED);
+//  HAL_Delay(5000);
+//  run_test_procedure();
+//  HAL_Delay(2000);
+//  send_status_to_gui(TEST_STOPPED);
+//  HAL_Delay(5000);
+//  send_status_to_gui(TEST_COMPLETED);
 
   /* USER CODE END 2 */
 
