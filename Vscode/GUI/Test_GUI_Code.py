@@ -1,18 +1,21 @@
 import tkinter as tk
-from tkinter import ttk
-from tkinter import messagebox
+from tkinter import ttk, messagebox
 import serial
 import threading
-
-# Seriële verbinding met STM32 microcontroller
-ser = serial.Serial('COM6', 9600, timeout=1)  # Pas aan naar de juiste COM-poort
+import time
 
 class TestSystemGUI:
     def __init__(self, root):
         self.root = root
         self.root.title("Test Systeem GUI")
-        self.root.geometry("900x700")  # Groot venster voor alle velden
+        self.root.geometry("900x700")
 
+        # Seriële verbinding met het Nucleo-bord
+        try:
+            self.ser = serial.Serial('COM6', 9600, timeout=1)
+        except serial.SerialException as e:
+            messagebox.showerror("Seriële fout", f"Kon de seriële poort niet openen: {e}")
+            self.ser = None
         # Notebook (tabbladen) creëren
         self.notebook = ttk.Notebook(self.root)
         self.notebook.pack(pady=10, expand=True)
@@ -38,9 +41,14 @@ class TestSystemGUI:
         self.create_thd_page_widgets(self.thd_page2, "THD_Scenario_2")
         self.create_thd_page_widgets(self.thd_page3, "THD_Scenario_3")
 
-        # Start een thread om data van STM32 te lezen
-        self.read_thread = threading.Thread(target=self.read_from_serial, daemon=True)
-        self.read_thread.start()
+        # Statusbalk
+        self.status_bar = tk.Label(self.root, text="Status: wachten op initialisatie testsyteem", bd=1, relief=tk.SUNKEN, anchor=tk.W)
+        self.status_bar.pack(side=tk.BOTTOM, fill=tk.X)
+
+        # Start een aparte thread om data van het Nucleo-bord te lezen
+        if self.ser:
+            self.read_thread = threading.Thread(target=self.read_from_serial, daemon=True)
+            self.read_thread.start()
 
     def create_label(self, parent, text, row, col, font_size=10, colspan=1):
         label = tk.Label(parent, text=text, font=("Arial", font_size))
@@ -72,10 +80,7 @@ class TestSystemGUI:
         # Knop voor standaard testprocedure
         ttk.Button(self.main_frame, text="Standaard Testprocedure", command=self.run_standard_test).grid(row=9, column=0, pady=20, padx=20)
 
-        # Real-time weergave van data van het Nucleo-board
-        self.create_label(self.main_frame, "Real-time Data van Nucleo", 10, 0, font_size=16, colspan=3)
-        self.data_display = tk.Text(self.main_frame, height=10, width=70)
-        self.data_display.grid(row=11, column=0, columnspan=3, padx=20, pady=20)
+ 
 
     def create_thd_page_widgets(self, page, prefix):
         # RMS Stroom en harmonischen invoervelden, inclusief validatie voor RMS-stroom
@@ -266,27 +271,65 @@ class TestSystemGUI:
         data += f"THD_S2_7H={thd_2_harmonics[2]};THD_S2_9H={thd_2_harmonics[3]};THD_S2_11H={thd_2_harmonics[4]};THD_S2_13H={thd_2_harmonics[5]};"
         data += f"THD_S3_RMS={thd_3_rms:.3f};THD_S3_3H={thd_3_harmonics[0]};THD_S3_5H={thd_3_harmonics[1]};"
         data += f"THD_S3_7H={thd_3_harmonics[2]};THD_S3_9H={thd_3_harmonics[3]};THD_S3_11H={thd_3_harmonics[4]};THD_S3_13H={thd_3_harmonics[5]};\n"
-
-        ser.write(data.encode())
-        print(f"Verzonden gegevens: {data}")
+        if self.ser:
+            self.ser.write(data.encode())
+            print(f"Verzonden gegevens: {data}")
 
     def stop_test(self):
         ser.write(b"STOP\n")
 
-    def read_from_serial(self):
-        while True:
-            if ser.in_waiting > 0:
-                line = ser.readline().decode('utf-8').strip()
-                self.update_data_display(line)
+ 
+    def update_status(self, status):
+        """Update de status in de GUI met icoontjes en kleuren"""
+        if status == "aan het wachten op de instellingen":
+            self.status_bar.config(text="⏳ Status: Wachten op instellingen", bg="dim gray", fg="white")
+        elif status == "gereed":
+            self.status_bar.config(text="✔️ Status: Gereed", bg="blue", fg="white")
+        elif status == "bezig met de testprocedure":
+            self.status_bar.config(text="🔄 Status: Bezig met testprocedure", bg="green", fg="white")
+        elif status == "gestopt":
+            self.status_bar.config(text="🟥 Status: Gestopt", bg="red", fg="white")  
+        elif status == "gepauzeerd":
+            self.status_bar.config(text="⏸️ Status: Gepauzeerd", bg="goldenrod", fg="white")
+        elif status == "voltooid":
+            self.status_bar.config(text="✅ Status: Voltooid", bg="dark green", fg="white")
 
-    def update_data_display(self, data):
-        self.data_display.insert(tk.END, data + "\n")
-        self.data_display.see(tk.END)
+        messagebox.showinfo("Status Update", f"Het testsysteem is nu {status}.")
+
+    def read_from_serial(self):
+        """Lees de data van het Nucleo-bord en update de GUI-status"""
+        while True:
+            if self.ser and self.ser.in_waiting > 0:
+                try:
+                    # Lees de data van het Nucleo-bord
+                    line = self.ser.readline().decode('utf-8').strip()
+
+                    # Controleer welke status het Nucleo-bord stuurt
+                    if line == "WACHT_OP_INSTELLINGEN":
+                        self.update_status("aan het wachten op de instellingen")
+                    elif line == "GEREED":
+                        self.update_status("gereed")
+                    elif line == "BEZIG_MET_TEST":
+                        self.update_status("bezig met de testprocedure")
+                    elif line == "GEPAUZEERD":
+                        self.update_status("gepauzeerd")
+                    elif line == "GESTOPT":
+                        self.update_status("gestopt")    
+                    elif line == "VOLTOOID":
+                        self.update_status("voltooid")
+
+                except Exception as e:
+                    print(f"Fout bij het lezen van seriële data: {e}")
+
+    def on_closing(self):
+        """Sluit de seriële verbinding wanneer de GUI wordt gesloten"""
+        if self.ser and self.ser.is_open:
+            self.ser.close()
+        self.root.quit()
 
 # Start de GUI
 root = tk.Tk()
 app = TestSystemGUI(root)
+root.protocol("WM_DELETE_WINDOW", app.on_closing)  # Zorg ervoor dat seriële poort wordt afgesloten
 root.mainloop()
 
-# Sluit de seriële verbinding
-ser.close()
