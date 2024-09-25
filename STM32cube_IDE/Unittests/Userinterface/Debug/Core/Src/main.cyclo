@@ -1,0 +1,17 @@
+main.c:95:6:zet_blauw_licht_aan	1
+main.c:101:6:zet_groen_licht_aan	1
+main.c:107:6:zet_rood_licht_aan	1
+main.c:113:6:groen_knipperend	1
+main.c:122:6:update_status	5
+main.c:143:6:check_knoppen	4
+main.c:158:5:main	1
+main.c:219:6:SystemClock_Config	3
+main.c:265:6:PeriphCommonClock_Config	2
+main.c:291:13:MX_I2S1_Init	2
+main.c:325:13:MX_I2S2_Init	2
+main.c:359:13:MX_I2S3_Init	2
+main.c:393:13:MX_SPI4_Init	2
+main.c:431:13:MX_USART1_UART_Init	2
+main.c:464:13:MX_USART3_UART_Init	2
+main.c:497:13:MX_GPIO_Init	1
+main.c:560:6:Error_Handler	1

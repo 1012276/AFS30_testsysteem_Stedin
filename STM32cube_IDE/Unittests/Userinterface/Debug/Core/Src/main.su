@@ -1,0 +1,17 @@
+../Core/Src/main.c:95:6:zet_blauw_licht_aan	8	static
+../Core/Src/main.c:101:6:zet_groen_licht_aan	8	static
+../Core/Src/main.c:107:6:zet_rood_licht_aan	8	static
+../Core/Src/main.c:113:6:groen_knipperend	8	static
+../Core/Src/main.c:122:6:update_status	16	static
+../Core/Src/main.c:143:6:check_knoppen	8	static
+../Core/Src/main.c:158:5:main	8	static
+../Core/Src/main.c:219:6:SystemClock_Config	88	static
+../Core/Src/main.c:265:6:PeriphCommonClock_Config	104	static
+../Core/Src/main.c:291:13:MX_I2S1_Init	8	static
+../Core/Src/main.c:325:13:MX_I2S2_Init	8	static
+../Core/Src/main.c:359:13:MX_I2S3_Init	8	static
+../Core/Src/main.c:393:13:MX_SPI4_Init	8	static
+../Core/Src/main.c:431:13:MX_USART1_UART_Init	8	static
+../Core/Src/main.c:464:13:MX_USART3_UART_Init	8	static
+../Core/Src/main.c:497:13:MX_GPIO_Init	56	static
+../Core/Src/main.c:560:6:Error_Handler	4	static,ignoring_inline_asm
