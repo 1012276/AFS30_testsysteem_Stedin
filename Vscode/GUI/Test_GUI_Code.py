@@ -41,13 +41,19 @@ class TestSystemGUI:
         self.create_thd_page_widgets(self.thd_page2, "THD_Scenario_2")
         self.create_thd_page_widgets(self.thd_page3, "THD_Scenario_3")
 
-        # Statusbalk
-        self.status_bar = tk.Label(self.root, text="Status: wachten op initialisatie testsyteem", bd=1, relief=tk.SUNKEN, anchor=tk.W)
+        # Statusbalk helemaal onderaan in de GUI
+        self.status_bar = tk.Label(self.root, text="Status: Wachten op initialisatie testsysteem", 
+                                bd=1, relief=tk.SUNKEN, anchor=tk.W)
         self.status_bar.pack(side=tk.BOTTOM, fill=tk.X)
 
-        # Label voor actief scenario
-        self.active_scenario_label = tk.Label(self.root, text="Actief Scenario: Wachten op start", font=("Arial", 12), bg="lightgray")
-        self.active_scenario_label.pack(pady=10)
+        # Maak een frame voor de scenario-text boven de statusbalk
+        self.bottom_left_frame = tk.Frame(self.root)
+        self.bottom_left_frame.pack(side=tk.BOTTOM, anchor=tk.W, pady=(0, 5))  # Frame aan de onderkant links plaatsen
+
+        # Voeg het label voor het actieve scenario toe aan de bottom_left_frame
+        self.scenario_text_label = tk.Label(self.bottom_left_frame, text="Geen actief scenario", font=("Arial", 12, "bold"),
+                                            bg="white", fg="black", relief=tk.GROOVE, padx=10, pady=5)
+        self.scenario_text_label.pack(side=tk.LEFT, padx=10, pady=5)
 
 
         # Start een aparte thread om data van het Nucleo-bord te lezen
@@ -63,12 +69,12 @@ class TestSystemGUI:
 
     def create_main_frame_widgets(self):
         # Stroom Test Scenario's - één veld voor L1, L2, L3 per scenario
-        self.create_label(self.main_frame, "Stroom Test Scenario's", 0, 0, font_size=16, colspan=2)
+        self.create_label(self.main_frame, "Test Scenario's", 0, 0, font_size=16, colspan=2)
 
         # Stroominstellingen voor drie scenario's met validatie
-        self.create_validated_input(self.main_frame, "Scenario 1 Stroom (Ampère):", 1, 0, "Stroom_Scenario_1", for_current=True)
-        self.create_validated_input(self.main_frame, "Scenario 2 Stroom (Ampère):", 2, 0, "Stroom_Scenario_2", for_current=True)
-        self.create_validated_input(self.main_frame, "Scenario 3 Stroom (Ampère):", 3, 0, "Stroom_Scenario_3", for_current=True)
+        self.create_validated_input(self.main_frame, "Stroom testscenario 1 (rms,Ampère):", 1, 0, "Stroom_Scenario_1", for_current=True)
+        self.create_validated_input(self.main_frame, "Stroom testscenario 2 (rms,Ampère):", 2, 0, "Stroom_Scenario_2", for_current=True)
+        self.create_validated_input(self.main_frame, "Stroom testscenario 3 (rms,Ampère):", 3, 0, "Stroom_Scenario_3", for_current=True)
 
         # THD samenvattingen (deze worden geüpdatet met de ingevulde waarden uit de THD tabbladen)
         self.thd_summary_1 = self.create_label(self.main_frame, "THD Scenario 1: Geen gegevens ingevoerd", 4, 0, font_size=10, colspan=2)
@@ -303,25 +309,26 @@ class TestSystemGUI:
     def update_active_scenario(self, scenario):
         """Update het actieve testscenario op de GUI en markeer het visueel"""
         # Update het actieve scenario label
-        self.active_scenario_label.config(text=f"Actief Scenario: {scenario}", bg="yellow", fg="black")
+        self.scenario_text_label.config(text=f"Actief testscenario: {scenario}")
+        # self.active_scenario_label.config(text=f"Actief Scenario: {scenario}", bg="snow", fg="black")
 
-        # Start knipperend effect voor visuele aandacht
-        self.blink_active_scenario()
+        # # Start knipperend effect voor visuele aandacht
+        # self.blink_active_scenario()
 
         # Toon een pop-up melding voor de gebruiker
         messagebox.showinfo("Nieuw Testscenario", f"Nieuw testscenario gestart: {scenario}")
 
-    def blink_active_scenario(self, count=0):
-        ## Laat het label knipperen om de gebruiker te attenderen op een nieuw scenario.
-        if count < 6:  # Laat het label 3 keer knipperen
-            current_bg = self.active_scenario_label.cget("bg")
-            next_bg = "red" if current_bg == "yellow" else "yellow"
-            self.active_scenario_label.config(bg=next_bg)
-            # Na 500ms opnieuw de kleur veranderen
-            self.root.after(500, self.blink_active_scenario, count + 1)
-        else:
-            # Zet de kleur na het knipperen weer terug naar standaard
-            self.active_scenario_label.config(bg="lightgray")
+    # def blink_active_scenario(self, count=0):
+    #     ## Laat het label knipperen om de gebruiker te attenderen op een nieuw scenario.
+    #     if count < 6:  # Laat het label 3 keer knipperen
+    #         current_bg = self.active_scenario_label.cget("bg")
+    #         next_bg = "red" if current_bg == "yellow" else "yellow"
+    #         self.active_scenario_label.config(bg=next_bg)
+    #         # Na 500ms opnieuw de kleur veranderen
+    #         self.root.after(500, self.blink_active_scenario, count + 1)
+    #     else:
+    #         # Zet de kleur na het knipperen weer terug naar standaard
+    #         self.active_scenario_label.config(bg="lightgray")
     
 
     def read_from_serial(self):
@@ -347,7 +354,7 @@ class TestSystemGUI:
                         self.update_status("voltooid")
                     elif line.startswith("ACTIEF_SCENARIO"):
                         scenario_nummer = line.split("=")[-1]
-                        self.update_active_scenario(f"Scenario {scenario_nummer}")
+                        self.update_active_scenario(f"test scenario {scenario_nummer}")
 
                 except Exception as e:
                     print(f"Fout bij het lezen van seriële data: {e}")

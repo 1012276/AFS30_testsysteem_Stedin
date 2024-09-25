@@ -159,7 +159,7 @@ void run_test_procedure(void) {
 
 	if (start_testprocedure== 1){
 		send_status_to_gui(TEST_RUNNING);
-	    for (int scenario = 1; scenario <= 3; scenario++) {
+	    for (int scenario = 1; scenario <= 6; scenario++) {
 	        // Stuur het actieve scenario naar de GUI
 	        send_active_scenario_to_gui(scenario);
 
@@ -280,6 +280,10 @@ int main(void)
 //  send_status_to_gui(TEST_STOPPED);
 //  HAL_Delay(5000);
 //  send_status_to_gui(TEST_COMPLETED);
+  while (!(start_testprocedure==1));
+  HAL_Delay(5000);
+  run_test_procedure();
+
 
   /* USER CODE END 2 */
 
@@ -287,8 +291,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  run_test_procedure();
-	  HAL_Delay(4000);
+
 
     /* USER CODE END WHILE */
 
