@@ -57,24 +57,22 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define DAC_RESET_Pin GPIO_PIN_3
-#define DAC_RESET_GPIO_Port GPIOE
-#define VCOM_TX_STLINK_Pin GPIO_PIN_10
-#define VCOM_TX_STLINK_GPIO_Port GPIOB
-#define VCOM_RX_ST_LINK_Pin GPIO_PIN_11
-#define VCOM_RX_ST_LINK_GPIO_Port GPIOB
-#define START_KNOP_Pin GPIO_PIN_12
-#define START_KNOP_GPIO_Port GPIOB
-#define PAUZEER_KNOP_Pin GPIO_PIN_13
-#define PAUZEER_KNOP_GPIO_Port GPIOB
-#define STOP_KNOP_Pin GPIO_PIN_14
-#define STOP_KNOP_GPIO_Port GPIOB
-#define RODE_LED_Pin GPIO_PIN_2
-#define RODE_LED_GPIO_Port GPIOG
-#define GROENE_LED_Pin GPIO_PIN_3
-#define GROENE_LED_GPIO_Port GPIOG
-#define BLAUWE_LED_Pin GPIO_PIN_4
-#define BLAUWE_LED_GPIO_Port GPIOG
+#define Start_knop_Pin GPIO_PIN_13
+#define Start_knop_GPIO_Port GPIOC
+#define Pauzeer_knop_Pin GPIO_PIN_14
+#define Pauzeer_knop_GPIO_Port GPIOC
+#define Stop_knop_Pin GPIO_PIN_15
+#define Stop_knop_GPIO_Port GPIOC
+#define Blauwe_LED_Pin GPIO_PIN_1
+#define Blauwe_LED_GPIO_Port GPIOF
+#define Groene_LED_Pin GPIO_PIN_2
+#define Groene_LED_GPIO_Port GPIOF
+#define Rode_LED_Pin GPIO_PIN_3
+#define Rode_LED_GPIO_Port GPIOF
+#define SPI2_SYNC_Pin GPIO_PIN_12
+#define SPI2_SYNC_GPIO_Port GPIOB
+#define LDAC_Pin GPIO_PIN_10
+#define LDAC_GPIO_Port GPIOD
 #define DE_OUTPUT_Pin GPIO_PIN_4
 #define DE_OUTPUT_GPIO_Port GPIOB
 #define RE_OUTPUT_Pin GPIO_PIN_5
