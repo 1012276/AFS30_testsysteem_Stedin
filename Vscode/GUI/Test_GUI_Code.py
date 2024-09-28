@@ -12,7 +12,7 @@ class TestSystemGUI:
 
         # Seriële verbinding met het Nucleo-bord
         try:
-            self.ser = serial.Serial('COM6', 9600, timeout=1)
+            self.ser = serial.Serial('COM6', 9600, timeout=0.0001)
         except serial.SerialException as e:
             messagebox.showerror("Seriële fout", f"Kon de seriële poort niet openen: {e}")
             self.ser = None
@@ -297,6 +297,7 @@ class TestSystemGUI:
         elif status == "gereed":
             self.status_bar.config(text="✔️ Status: Gereed", bg="blue", fg="white")
         elif status == "bezig met de testprocedure":
+            print(f"De tesptrocedure is gestart_V2")
             self.status_bar.config(text="🔄 Status: Bezig met testprocedure", bg="green", fg="white")
         elif status == "gestopt":
             self.status_bar.config(text="🟥 Status: Gestopt", bg="red", fg="white")  
@@ -346,6 +347,7 @@ class TestSystemGUI:
                         self.update_status("gereed")
                     elif line == "BEZIG_MET_TEST":
                         self.update_status("bezig met de testprocedure")
+                        print(f"De tesptrocedure is gestart_V1")
                     elif line == "GEPAUZEERD":
                         self.update_status("gepauzeerd")
                     elif line == "GESTOPT":
@@ -355,6 +357,7 @@ class TestSystemGUI:
                     elif line.startswith("ACTIEF_SCENARIO"):
                         scenario_nummer = line.split("=")[-1]
                         self.update_active_scenario(f"test scenario {scenario_nummer}")
+                        print(f"test scnario:::")
 
                 except Exception as e:
                     print(f"Fout bij het lezen van seriële data: {e}")

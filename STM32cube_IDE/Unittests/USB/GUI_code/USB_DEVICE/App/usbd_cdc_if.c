@@ -27,7 +27,7 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
-#define BUFFER_SIZE_ 1024
+
 /* Private macro -------------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
@@ -65,6 +65,7 @@ extern char receivedData[100];
   */
 
 /* USER CODE BEGIN PRIVATE_DEFINES */
+#define BUFFER_SIZE_ 1024
 /* USER CODE END PRIVATE_DEFINES */
 
 /**
