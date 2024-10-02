@@ -36,12 +36,7 @@
 /* USER CODE BEGIN PD */
 #define GPIO_PORT_VBUS GPIOA   // De GPIO-poort voor VBUS (bijv. GPIOA)
 #define GPIO_PIN_VBUS  GPIO_PIN_9   // De specifieke pin (bijv. pin 9 op GPIOA)
-//#define BUFFER_SIZE 1024   // Vergroot de buffer naar 512 karakters
-//#define WAITING_FOR_SETTINGS "STATUS: Wachten op instellingen\r\n"
-//#define READY_STATUS "STATUS: Gereed\r\n"
-//#define TEST_RUNNING "STATUS: Bezig met testprocedure\r\n"
-//#define TEST_PAUSED "STATUS: Gepauzeerd\r\n"
-//#define TEST_COMPLETED "STATUS: Voltooid\r\n"
+
 
 #define BUFFER_SIZE 1024   // Vergroot de buffer naar 512 karakters
 #define WAITING_FOR_SETTINGS "WACHT_OP_INSTELLINGEN"

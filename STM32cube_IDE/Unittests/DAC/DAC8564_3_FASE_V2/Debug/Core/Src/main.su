@@ -1,0 +1,14 @@
+../Core/Src/main.c:133:6:calculate_three_phase_sine_wave_samples	72	static
+../Core/Src/main.c:201:6:select_test_scenario	16	static
+../Core/Src/main.c:273:6:DAC8564_Write	24	static
+../Core/Src/main.c:284:6:HAL_TIM_PeriodElapsedCallback	16	static
+../Core/Src/main.c:343:6:SET_refference	16	static
+../Core/Src/main.c:359:5:main	16	static
+../Core/Src/main.c:440:6:SystemClock_Config	88	static
+../Core/Src/main.c:487:13:MX_I2S1_Init	8	static
+../Core/Src/main.c:521:13:MX_SPI2_Init	8	static
+../Core/Src/main.c:559:13:MX_TIM2_Init	32	static
+../Core/Src/main.c:604:13:MX_USART1_UART_Init	8	static
+../Core/Src/main.c:637:13:MX_USART3_UART_Init	8	static
+../Core/Src/main.c:670:13:MX_GPIO_Init	56	static
+../Core/Src/main.c:743:6:Error_Handler	4	static,ignoring_inline_asm

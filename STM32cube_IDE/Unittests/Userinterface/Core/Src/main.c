@@ -33,7 +33,8 @@ typedef enum {
     STATUS_GEREED,
     STATUS_TEST_GESTART,
     STATUS_TEST_GEPAUZEERD,
-    STATUS_TEST_KLAAR
+    STATUS_TEST_KLAAR,
+	STATUS_TEST_VOLTOOID
 } TestStatus;
 /* USER CODE END PTD */
 
@@ -140,6 +141,12 @@ void groen_knipperend() {
 
 }
 
+void blauw_knipperend() {
+    HAL_GPIO_WritePin(GROENE_LED_PORT, GROENE_LED_PIN, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(RODE_LED_PORT, RODE_LED_PIN, GPIO_PIN_RESET);
+    HAL_GPIO_TogglePin(BLAUWE_LED_PORT, BLAUWE_LED_PIN);
+}
+
 void update_status(TestStatus nieuwe_status) {
     huidig_status = nieuwe_status;
 }
@@ -183,10 +190,10 @@ int main(void)
   HAL_GPIO_WritePin(RODE_LED_PORT, RODE_LED_PIN, GPIO_PIN_RESET);
   HAL_GPIO_WritePin(BLAUWE_LED_PORT, BLAUWE_LED_PIN, GPIO_PIN_RESET);
 
-  HAL_Delay(5000);
+  HAL_Delay(3000);
   update_status(STATUS_GEREED);
-
-
+  HAL_Delay(3000);
+  update_status(STATUS_GEREED);
 
   /* USER CODE END 2 */
 
@@ -262,7 +269,7 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-  RCC_OscInitStruct.PLL.PLLM = 4;
+  RCC_OscInitStruct.PLL.PLLM = 6;
   RCC_OscInitStruct.PLL.PLLN = 168;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = 7;
@@ -500,6 +507,9 @@ void StartKnopThread(void *argument)
             case STATUS_TEST_KLAAR:
                 zet_rood_licht_aan();
                 break;
+	        case STATUS_TEST_VOLTOOID:
+	              blauw_knipperend();  // Blauw knipperen als voltooid
+	              break;
             default:
                 break;
         }
