@@ -26,6 +26,14 @@
 /* USER CODE END INCLUDE */
 
 /* Private typedef -----------------------------------------------------------*/
+/* Private define ------------------------------------------------------------*/
+/* Private macro -------------------------------------------------------------*/
+
+/* USER CODE BEGIN PV */
+/* Private variables ---------------------------------------------------------*/
+extern uint32_t receivedLength;
+extern char receivedData[1024];
+
 typedef enum {
 	STATUS_IDLE,
     STATUS_WACHTEN_OP_INSTELLINGEN,
@@ -35,13 +43,6 @@ typedef enum {
 	STATUS_TEST_GESTOPT,
     STATUS_TEST_VOLTOOID
 } TestStatus;
-/* Private define ------------------------------------------------------------*/
-/* Private macro -------------------------------------------------------------*/
-
-/* USER CODE BEGIN PV */
-/* Private variables ---------------------------------------------------------*/
-extern uint32_t receivedLength;
-extern char receivedData[1024];
 extern TestStatus huidig_status;
 /* USER CODE END PV */
 

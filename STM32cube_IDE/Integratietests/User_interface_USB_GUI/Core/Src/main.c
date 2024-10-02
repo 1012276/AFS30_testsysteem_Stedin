@@ -206,19 +206,15 @@ void update_status(TestStatus nieuwe_status) {
 void send_active_scenario_to_gui(int scenario_number) {
     char scenario_message[64];
     sprintf(scenario_message, "ACTIEF_SCENARIO=%d\n", scenario_number);
-//    send_status_to_gui(scenario_message);
-//    osMutexWait(usbMutex, osWaitForever);  // Vergrendel de mutex
     send_status_to_gui(scenario_message);  // Verstuur het scenario
-//    osMutexRelease(usbMutex);  // Ontgrendel de mutex
+
 
 }
 
 
 void send_status_to_gui(char* status_message) {
     CDC_Transmit_FS((uint8_t *)status_message, strlen(status_message));
-//    osMutexWait(usbMutex, osWaitForever);  // Vergrendel de mutex
-//    CDC_Transmit_FS((uint8_t *)status_message, strlen(status_message));  // Verstuur data
-//    osMutexRelease(usbMutex);
+
 }
 
 // Functie om te checken of de knoppen voor starten, pauzeren of stoppen zijn ingedrukt
@@ -319,8 +315,10 @@ int main(void)
   MX_TIM2_Init();
   MX_I2S1_Init();
   MX_SPI2_Init();
-  MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
+
+  MX_USB_DEVICE_Init();
+
   usb_busy = true;
 
   while (!(HAL_GPIO_ReadPin(GPIO_PORT_VBUS, GPIO_PIN_VBUS) == GPIO_PIN_SET));
@@ -410,7 +408,7 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-  RCC_OscInitStruct.PLL.PLLM = 4;
+  RCC_OscInitStruct.PLL.PLLM = 6;
   RCC_OscInitStruct.PLL.PLLN = 168;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = 7;
@@ -691,7 +689,7 @@ static void MX_GPIO_Init(void)
 void StartDefaultTask(void *argument)
 {
   /* init code for USB_DEVICE */
-//  MX_USB_DEVICE_Init();
+
   /* USER CODE BEGIN 5 */
 
 

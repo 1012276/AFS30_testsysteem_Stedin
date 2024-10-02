@@ -12,7 +12,7 @@ class TestSystemGUI:
 
         # Seriële verbinding met het Nucleo-bord
         try:
-            self.ser = serial.Serial('COM6', 9600, timeout=0.0001)
+            self.ser = serial.Serial('COM8', 9600, timeout=0.0001)
         except serial.SerialException as e:
             messagebox.showerror("Seriële fout", f"Kon de seriële poort niet openen: {e}")
             self.ser = None
