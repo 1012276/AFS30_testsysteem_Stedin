@@ -27,9 +27,9 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   ALLOC
  11 .ARM.attributes 00000030  00000000  00000000  00020110  2**0
                   CONTENTS, READONLY
- 12 .debug_info   0001b749  00000000  00000000  00020140  2**0
+ 12 .debug_info   0001b745  00000000  00000000  00020140  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 13 .debug_abbrev 0000397d  00000000  00000000  0003b889  2**0
+ 13 .debug_abbrev 0000397d  00000000  00000000  0003b885  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  14 .debug_aranges 00001678  00000000  00000000  0003f208  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
@@ -2828,10 +2828,7 @@ void select_test_scenario(int scenario_number) {
  8002058:	20002844 	.word	0x20002844
 
 0800205c <DAC8564_Write>:
-//        double sample_C = AMPLITUDE * sin(2 * PI * FREQUENCY * t + PHASE_SHIFT_240_DEG)*sqrt(2.0);
-//        sine_wave_C[i] = (uint16_t)((65536 / (2 * VREF)) * (sample_C + VREF));
-//    }
-//}
+
 
 void DAC8564_Write(uint16_t channel, uint16_t value) {
  800205c:	b580      	push	{r7, lr}
@@ -2921,10 +2918,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
  80020fa:	2200      	movs	r2, #0
  80020fc:	601a      	str	r2, [r3, #0]
     	        // Wissel scenario na 120 seconden
-    	        if (seconds_elapsed >=5) {
+    	        if (seconds_elapsed >=15) {
  80020fe:	4b3d      	ldr	r3, [pc, #244]	; (80021f4 <HAL_TIM_PeriodElapsedCallback+0x130>)
  8002100:	681b      	ldr	r3, [r3, #0]
- 8002102:	2b04      	cmp	r3, #4
+ 8002102:	2b0e      	cmp	r3, #14
  8002104:	d939      	bls.n	800217a <HAL_TIM_PeriodElapsedCallback+0xb6>
     	            seconds_elapsed = 0;
  8002106:	4b3b      	ldr	r3, [pc, #236]	; (80021f4 <HAL_TIM_PeriodElapsedCallback+0x130>)
@@ -2998,11 +2995,11 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
  8002174:	4b27      	ldr	r3, [pc, #156]	; (8002214 <HAL_TIM_PeriodElapsedCallback+0x150>)
  8002176:	2200      	movs	r2, #0
  8002178:	801a      	strh	r2, [r3, #0]
-//           DAC8564_Write(2, sine_wave_C_S2[sample_index]);  // Phase C on DAC C
-//
-//           sample_index = (sample_index + 1) % NUM_SAMPLES;
-//
-//    		   }
+
+
+
+    	}
+
         DAC8564_Write(0, current_sine_wave_A[sample_index]);  // Phase A on DAC A
  800217a:	4b21      	ldr	r3, [pc, #132]	; (8002200 <HAL_TIM_PeriodElapsedCallback+0x13c>)
  800217c:	681a      	ldr	r2, [r3, #0]
@@ -3245,7 +3242,7 @@ int main(void)
  80022fa:	f7ff ff8f 	bl	800221c <SET_refference>
 
   // Calculate samples for three-phase sine waves
-//  calculate_three_phase_sine_wave_samples();
+
 
   if (HAL_TIM_Base_Start_IT(&htim2) != HAL_OK) {
  80022fe:	4818      	ldr	r0, [pc, #96]	; (8002360 <main+0xfc>)

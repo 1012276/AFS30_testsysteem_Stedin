@@ -262,7 +262,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
     	        seconds_elapsed++;
                 sample_counter=0;
     	        // Wissel scenario na 120 seconden
-    	        if (seconds_elapsed >=5) {
+    	        if (seconds_elapsed >=15) {
     	            seconds_elapsed = 0;
 
 //    	             Ga door naar het volgende scenario
