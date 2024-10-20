@@ -3077,10 +3077,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
  800227c:	2200      	movs	r2, #0
  800227e:	601a      	str	r2, [r3, #0]
 								// Wissel scenario na 120 seconden
-								if (seconds_elapsed >=8) {
+								if (seconds_elapsed >=12) {
  8002280:	4b3f      	ldr	r3, [pc, #252]	; (8002380 <HAL_TIM_PeriodElapsedCallback+0x16c>)
  8002282:	681b      	ldr	r3, [r3, #0]
- 8002284:	2b07      	cmp	r3, #7
+ 8002284:	2b0b      	cmp	r3, #11
  8002286:	d93a      	bls.n	80022fe <HAL_TIM_PeriodElapsedCallback+0xea>
 									seconds_elapsed = 0;
  8002288:	4b3d      	ldr	r3, [pc, #244]	; (8002380 <HAL_TIM_PeriodElapsedCallback+0x16c>)

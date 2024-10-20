@@ -262,7 +262,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
     	        seconds_elapsed++;
                 sample_counter=0;
     	        // Wissel scenario na 120 seconden
-    	        if (seconds_elapsed >=15) {
+    	        if (seconds_elapsed >=20) {
     	            seconds_elapsed = 0;
 
 //    	             Ga door naar het volgende scenario
@@ -285,7 +285,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 
     	}
 
-        DAC8564_Write(0, current_sine_wave_A[sample_index]);  // Phase A on DAC A
+        DAC8564_Write(3, current_sine_wave_A[sample_index]);  // Phase A on DAC A
         DAC8564_Write(1, current_sine_wave_B[sample_index]);  // Phase B on DAC B
         DAC8564_Write(2, current_sine_wave_C[sample_index]);  // Phase C on DAC C
 
@@ -345,17 +345,26 @@ int main(void)
   MX_I2S1_Init();
   MX_SPI2_Init();
   /* USER CODE BEGIN 2 */
-  stroom_s1 = 10000.0;
-  stroom_s2 = 7500.0;
-  stroom_s3 = 5000.0;
+//  stroom_s1 = 10000.0;
+//  stroom_s2 = 7500.0;
+//  stroom_s3 = 5000.0;
+//
+// // Globale variabelen voor THD scenario's
+// thd_s1_rms = 4000.0, thd_s2_rms =3000.0, thd_s3_rms =2000.0;
+//
+// for (int i = 1; i <= 6; i++) {
+//     select_test_scenario(i);
+// }
+  stroom_s1 = 400;
+  stroom_s2 = 5.0;
+  stroom_s3 = 5.0;
 
  // Globale variabelen voor THD scenario's
- thd_s1_rms = 4000.0, thd_s2_rms =3000.0, thd_s3_rms =2000.0;
+ thd_s1_rms = 5.0, thd_s2_rms =5.0, thd_s3_rms =5.0;
 
  for (int i = 1; i <= 6; i++) {
      select_test_scenario(i);
  }
-
  // Zet het eerste scenario klaar
 
  current_sine_wave_A = sine_wave_A_scenario[0];
