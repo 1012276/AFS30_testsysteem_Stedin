@@ -1,0 +1,13 @@
+Output: NC Drill Files
+Type  : NC Drill
+From  : Project [Testopstelling_DA_BOX_Stedin_V2.PrjPcb]
+   Generated File[Testopstelling_DA_BOX_STEDIN_V2-RoundHoles.TXT]
+   Generated File[Testopstelling_DA_BOX_STEDIN_V2-SlotHoles.TXT]
+   Generated File[Testopstelling_DA_BOX_STEDIN_V2.LDP]
+   Generated File[Testopstelling_DA_BOX_STEDIN_V2.DRR]
+
+
+Files Generated   : 4
+Documents Printed : 0
+
+Finished Output Generation At 11:55:43 On 10-9-2024

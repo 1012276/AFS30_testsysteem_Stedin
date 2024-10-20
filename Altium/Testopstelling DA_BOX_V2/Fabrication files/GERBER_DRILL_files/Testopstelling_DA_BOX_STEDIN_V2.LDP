@@ -1,0 +1,3 @@
+Layer Pairs Export File for PCB: C:\SCHOOL\Afstudeerstage_Stedin\Altium\PCB\Testopstelling_DA_BOX_Stedin_V2\Testopstelling_DA_BOX_Stedin_V2\Testopstelling_DA_BOX_STEDIN_V2.PcbDoc
+LayersSetName=Top_Bot_Thru_Holes|DrillFile=testopstelling_da_box_stedin_v2-roundholes.txt|DrillLayers=gtl,g1,g2,gbl
+LayersSetName=Top_Bot_Slot_Holes|DrillFile=testopstelling_da_box_stedin_v2-slotholes.txt|DrillLayers=gtl,g1,g2,gbl

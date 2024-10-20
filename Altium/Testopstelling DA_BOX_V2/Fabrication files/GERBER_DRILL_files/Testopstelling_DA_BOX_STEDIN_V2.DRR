@@ -1,0 +1,29 @@
+----------------------------------------------------------------------------------------------------------------------------------
+NCDrill File Report For: Testopstelling_DA_BOX_STEDIN_V2.PcbDoc   10-9-2024  11:55:43
+----------------------------------------------------------------------------------------------------------------------------------
+
+Layer Pair : Top Layer to Bottom Layer
+ASCII RoundHoles File : Testopstelling_DA_BOX_STEDIN_V2-RoundHoles.TXT
+ASCII SlotHoles File : Testopstelling_DA_BOX_STEDIN_V2-SlotHoles.TXT
+
+Tool       Hole Size               Hole Tolerance               Hole Type       Hole Count   Plated         Tool Travel
+----------------------------------------------------------------------------------------------------------------------------------
+T1      0.25mm (10mil)                                            Round             74        PTH        535.09mm (21.07inch)
+T2      0.3mm (12mil)                                             Round             165       PTH        591.79mm (23.30inch)
+T3      0.4mm (16mil)                                             Round             160       PTH        1594.18mm (62.76inch)
+T4      0.5mm (20mil)                                             Round             2         PTH        37.31mm (1.47inch)
+T5      0.6mm (24mil)                                             Round             9         PTH        133.26mm (5.25inch)
+T6      0.6mm (24mil)                                             Slot              2         PTH        18.23mm (0.72inch)
+T7      0.65mm (26mil)                                            Slot              2         PTH        9.30mm (0.37inch)
+T8      0.9mm (35mil)                                             Round             72        PTH        391.41mm (15.41inch)
+T9      1mm (39mil)                                               Round             16        PTH        92.24mm (3.63inch)
+T10     1.02mm (40mil)                                            Round             28        PTH        324.64mm (12.78inch)
+T11     1.6mm (63mil)                                             Round             18        PTH        296.47mm (11.67inch)
+T12     3mm (118mil)                                              Round             4         PTH        418.90mm (16.49inch)
+T13     6.756mm (266mil)                                          Round             2         PTH        19.05mm (0.75inch)
+T14     1.02mm (40mil)                                            Round             2         NPTH       6.35mm (0.25inch)
+T15     3.25mm (128mil)                                           Round             18        NPTH       277.16mm (10.91inch)
+----------------------------------------------------------------------------------------------------------------------------------
+Totals                                                                              574
+
+Total Processing Time (hh:mm:ss) : 00:00:00
