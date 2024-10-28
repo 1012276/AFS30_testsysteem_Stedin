@@ -24,7 +24,7 @@ main.c:859:13:MX_USART1_UART_Init	2
 main.c:892:13:MX_USART3_UART_Init	2
 main.c:925:13:MX_GPIO_Init	1
 main.c:990:6:StartDefaultTask	1
-main.c:1013:6:StartKnopThread	4
-main.c:1039:6:StartLEDThread	13
+main.c:1013:6:KnopThread	4
+main.c:1039:6:Status_Thread	13
 main.c:1122:6:Display_ACTIVE_scenario	4
 main.c:1147:6:Error_Handler	1

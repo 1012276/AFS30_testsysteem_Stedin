@@ -150,7 +150,7 @@ uint32_t receivedLength = 0;  // Houd de lengte van de ontvangen data bij
 volatile uint16_t sample_index = 0;
 volatile uint32_t seconds_elapsed = 0;
 volatile uint8_t dac_update_flag = 0;
-volatile uint32_t sample_counter = 0;
+volatile uint32_t Timer_counter = 0;
 volatile int current_scenario = 1;
 
 float AMPLITUDE;
@@ -197,8 +197,8 @@ static void MX_TIM2_Init(void);
 static void MX_I2S1_Init(void);
 static void MX_SPI2_Init(void);
 void StartDefaultTask(void *argument);
-void StartKnopThread(void *argument);
-void StartLEDThread(void *argument);
+void KnopThread(void *argument);
+void Status_Thread(void *argument);
 void Display_ACTIVE_scenario(void *argument);
 
 /* USER CODE BEGIN PFP */
@@ -352,10 +352,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 				  // Als de test gepauzeerd is, blijf in deze lus totdat de status verandert
 
 
-						sample_counter++;
-						if (sample_counter== 48000) {
+						Timer_counter++;
+						if (Timer_counter== 48000) {
 								seconds_elapsed++;
-								sample_counter=0;
+								Timer_counter=0;
 								// Wissel scenario na 120 seconden
 								if (seconds_elapsed >=12) {
 									seconds_elapsed = 0;
@@ -382,7 +382,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 						}
 				}else{
 
-					sample_counter=0;
+					Timer_counter=0;
 				}
 
 				DAC8564_Write(0, current_sine_wave_A[sample_index]);  // Phase A on DAC A
@@ -658,10 +658,10 @@ int main(void)
   defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
 
   /* creation of KnopTASK */
-  KnopTASKHandle = osThreadNew(StartKnopThread, NULL, &KnopTASK_attributes);
+  KnopTASKHandle = osThreadNew(KnopThread, NULL, &KnopTASK_attributes);
 
   /* creation of LedTASK */
-  LedTASKHandle = osThreadNew(StartLEDThread, NULL, &LedTASK_attributes);
+  LedTASKHandle = osThreadNew(Status_Thread, NULL, &LedTASK_attributes);
 
   /* creation of Active_TASK */
   Active_TASKHandle = osThreadNew(Display_ACTIVE_scenario, NULL, &Active_TASK_attributes);
@@ -1003,16 +1003,16 @@ void StartDefaultTask(void *argument)
   /* USER CODE END 5 */
 }
 
-/* USER CODE BEGIN Header_StartKnopThread */
+/* USER CODE BEGIN Header_KnopThread */
 /**
 * @brief Function implementing the KnopTASK thread.
 * @param argument: Not used
 * @retval None
 */
-/* USER CODE END Header_StartKnopThread */
-void StartKnopThread(void *argument)
+/* USER CODE END Header_KnopThread */
+void KnopThread(void *argument)
 {
-  /* USER CODE BEGIN StartKnopThread */
+  /* USER CODE BEGIN KnopThread */
   /* Infinite loop */
 	for(;;) {
 		if (HAL_GPIO_ReadPin(START_KNOP_PORT, START_KNOP_PIN) == GPIO_PIN_RESET) {
@@ -1026,19 +1026,19 @@ void StartKnopThread(void *argument)
 	   osDelay(100);
 
 	}
-  /* USER CODE END StartKnopThread */
+  /* USER CODE END KnopThread */
 }
 
-/* USER CODE BEGIN Header_StartLEDThread */
+/* USER CODE BEGIN Header_Status_Thread */
 /**
 * @brief Function implementing the LedTASK thread.
 * @param argument: Not used
 * @retval None
 */
-/* USER CODE END Header_StartLEDThread */
-void StartLEDThread(void *argument)
+/* USER CODE END Header_Status_Thread */
+void Status_Thread(void *argument)
 {
-  /* USER CODE BEGIN StartLEDThread */
+  /* USER CODE BEGIN Status_Thread */
   TestStatus vorige_status = STATUS_IDLE;  // Houdt de vorige stat
   /* Infinite loop */
     for(;;) {
@@ -1109,7 +1109,7 @@ void StartLEDThread(void *argument)
     	      // Delay van 100 ms om knipperen te laten werken en CPU te sparen
     	      osDelay(100);
     }
-  /* USER CODE END StartLEDThread */
+  /* USER CODE END Status_Thread */
 }
 
 /* USER CODE BEGIN Header_Display_ACTIVE_scenario */

@@ -42,34 +42,34 @@ $(wildcard ../makefile.init) \
 $(wildcard ../makefile.targets) \
 
 
-BUILD_ARTIFACT_NAME := Integratie_test_DAC_USERinterfac_USB
+BUILD_ARTIFACT_NAME := Testopstelling_DA_BOX_STEDIN_V2
 BUILD_ARTIFACT_EXTENSION := elf
 BUILD_ARTIFACT_PREFIX :=
 BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXECUTABLES += \
-Integratie_test_DAC_USERinterfac_USB.elf \
+Testopstelling_DA_BOX_STEDIN_V2.elf \
 
 MAP_FILES += \
-Integratie_test_DAC_USERinterfac_USB.map \
+Testopstelling_DA_BOX_STEDIN_V2.map \
 
 SIZE_OUTPUT += \
 default.size.stdout \
 
 OBJDUMP_LIST += \
-Integratie_test_DAC_USERinterfac_USB.list \
+Testopstelling_DA_BOX_STEDIN_V2.list \
 
 
 # All Target
 all: main-build
 
 # Main-build Target
-main-build: Integratie_test_DAC_USERinterfac_USB.elf secondary-outputs
+main-build: Testopstelling_DA_BOX_STEDIN_V2.elf secondary-outputs
 
 # Tool invocations
-Integratie_test_DAC_USERinterfac_USB.elf Integratie_test_DAC_USERinterfac_USB.map: $(OBJS) $(USER_OBJS) C:\SCHOOL\Afstudeerstage_Stedin\Github\AFS30_testsysteem_Stedin\STM32cube_IDE\Integratietests\DAC_USB_UI\STM32F446ZETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "Integratie_test_DAC_USERinterfac_USB.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\SCHOOL\Afstudeerstage_Stedin\Github\AFS30_testsysteem_Stedin\STM32cube_IDE\Integratietests\DAC_USB_UI\STM32F446ZETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Integratie_test_DAC_USERinterfac_USB.map" -Wl,--gc-sections -static -u _scanf_float --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Testopstelling_DA_BOX_STEDIN_V2.elf Testopstelling_DA_BOX_STEDIN_V2.map: $(OBJS) $(USER_OBJS) C:\SCHOOL\Afstudeerstage_Stedin\Github\AFS30_testsysteem_Stedin\STM32cube_IDE\Final\ code\STM32F446ZETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "Testopstelling_DA_BOX_STEDIN_V2.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\SCHOOL\Afstudeerstage_Stedin\Github\AFS30_testsysteem_Stedin\STM32cube_IDE\Final code\STM32F446ZETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Testopstelling_DA_BOX_STEDIN_V2.map" -Wl,--gc-sections -static -u _scanf_float --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -78,14 +78,14 @@ default.size.stdout: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
-Integratie_test_DAC_USERinterfac_USB.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "Integratie_test_DAC_USERinterfac_USB.list"
+Testopstelling_DA_BOX_STEDIN_V2.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "Testopstelling_DA_BOX_STEDIN_V2.list"
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) Integratie_test_DAC_USERinterfac_USB.elf Integratie_test_DAC_USERinterfac_USB.list Integratie_test_DAC_USERinterfac_USB.map default.size.stdout
+	-$(RM) Testopstelling_DA_BOX_STEDIN_V2.elf Testopstelling_DA_BOX_STEDIN_V2.list Testopstelling_DA_BOX_STEDIN_V2.map default.size.stdout
 	-@echo ' '
 
 secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)
