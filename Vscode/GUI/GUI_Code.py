@@ -10,7 +10,7 @@ class TestSystemGUI:
         self.root.title("Test Systeem GUI")
         self.root.geometry("900x700")
 
-        # Seriële verbinding met het Nucleo-bord
+        # Seriële verbinding met het testsysteem
         try:
             self.ser = serial.Serial('COM8',115200, timeout=0.0001)  
         except serial.SerialException as e:
@@ -56,7 +56,7 @@ class TestSystemGUI:
         self.scenario_text_label.pack(side=tk.LEFT, padx=10, pady=5)
 
 
-        # Start een aparte thread om data van het Nucleo-bord te lezen
+        # Start een aparte thread om data van het testsysteem te lezen
         if self.ser:
             self.read_thread = threading.Thread(target=self.read_from_serial, daemon=True)
             self.read_thread.start()
@@ -311,37 +311,21 @@ class TestSystemGUI:
         """Update het actieve testscenario op de GUI en markeer het visueel"""
         # Update het actieve scenario label
         self.scenario_text_label.config(text=f"Actief testscenario: {scenario}")
-        # self.active_scenario_label.config(text=f"Actief Scenario: {scenario}", bg="snow", fg="black")
-
-        # # Start knipperend effect voor visuele aandacht
-        # self.blink_active_scenario()
-
         # Toon een pop-up melding voor de gebruiker
         messagebox.showinfo("Nieuw Testscenario", f"Nieuw testscenario gestart: {scenario}")
 
-    # def blink_active_scenario(self, count=0):
-    #     ## Laat het label knipperen om de gebruiker te attenderen op een nieuw scenario.
-    #     if count < 6:  # Laat het label 3 keer knipperen
-    #         current_bg = self.active_scenario_label.cget("bg")
-    #         next_bg = "red" if current_bg == "yellow" else "yellow"
-    #         self.active_scenario_label.config(bg=next_bg)
-    #         # Na 500ms opnieuw de kleur veranderen
-    #         self.root.after(500, self.blink_active_scenario, count + 1)
-    #     else:
-    #         # Zet de kleur na het knipperen weer terug naar standaard
-    #         self.active_scenario_label.config(bg="lightgray")
     
 
     def read_from_serial(self):
-        #Lees de data van het Nucleo-bord en update de GUI-status
+        #Lees de data van het testsysteem en update de GUI-status
         while True:
             if self.ser and self.ser.in_waiting > 0:
                 try:
 
-                    # Lees de data van het Nucleo-bord
+                    # Lees de data van het testsysteem
                     line = self.ser.readline().decode('utf-8').strip()
 
-                    # Controleer welke status het Nucleo-bord stuurt
+                    # Controleer welke status het testsysteem stuurt
                     if line == "WACHT_OP_INSTELLINGEN":
                         self.update_status("aan het wachten op de instellingen")
                     elif line == "GEREED":

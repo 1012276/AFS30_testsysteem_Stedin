@@ -33,8 +33,8 @@ typedef enum {
     STATUS_GEREED,
     STATUS_TEST_GESTART,
     STATUS_TEST_GEPAUZEERD,
-    STATUS_TEST_KLAAR,
-	STATUS_TEST_VOLTOOID
+	STATUS_TEST_GESTOPT,
+    STATUS_TEST_VOLTOOID
 } TestStatus;
 /* USER CODE END PTD */
 
@@ -190,10 +190,6 @@ int main(void)
   HAL_GPIO_WritePin(RODE_LED_PORT, RODE_LED_PIN, GPIO_PIN_RESET);
   HAL_GPIO_WritePin(BLAUWE_LED_PORT, BLAUWE_LED_PIN, GPIO_PIN_RESET);
 
-  HAL_Delay(3000);
-  update_status(STATUS_GEREED);
-  HAL_Delay(3000);
-  update_status(STATUS_GEREED);
 
   /* USER CODE END 2 */
 
@@ -242,6 +238,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
+
 
     /* USER CODE BEGIN 3 */
   }
@@ -477,6 +474,7 @@ void StartDefaultTask(void *argument)
   /* Infinite loop */
   for(;;)
   {
+
     osDelay(1);
   }
   /* USER CODE END 5 */
@@ -504,7 +502,7 @@ void StartKnopThread(void *argument)
             case STATUS_TEST_GEPAUZEERD:
                 groen_knipperend();
                 break;
-            case STATUS_TEST_KLAAR:
+            case STATUS_TEST_GESTOPT:
                 zet_rood_licht_aan();
                 break;
 	        case STATUS_TEST_VOLTOOID:
@@ -536,7 +534,9 @@ void StartLEDThread(void *argument)
 		} else if (HAL_GPIO_ReadPin(PAUZEER_KNOP_PORT, PAUZEER_KNOP_PIN) == GPIO_PIN_RESET) {
 		update_status(STATUS_TEST_GEPAUZEERD);
 		} else if (HAL_GPIO_ReadPin(STOP_KNOP_PORT, STOP_KNOP_PIN) == GPIO_PIN_RESET) {
-		update_status(STATUS_TEST_KLAAR);
+		update_status(STATUS_TEST_GESTOPT);
+
+
 		}
 
 	   osDelay(100);
