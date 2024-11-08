@@ -66,11 +66,12 @@ typedef enum {
 #define STOP_KNOP_PIN GPIO_PIN_15
 #define STOP_KNOP_PORT GPIOC
 
-#define GPIO_PORT_VBUS GPIOA   // De GPIO-poort voor VBUS (bijv. GPIOA)
-#define GPIO_PIN_VBUS  GPIO_PIN_9   // De specifieke pin (bijv. pin 9 op GPIOA)
+#define GPIO_PORT_VBUS GPIOA   // De GPIO-poort voor VBUS
+#define GPIO_PIN_VBUS  GPIO_PIN_9   // De specifieke pin
 
 
-#define BUFFER_SIZE 1024   // Vergroot de buffer naar 512 karakters
+#define BUFFER_SIZE 1024   // Data buffer voor USB
+// De data die wordt doorgestuurd naar de GUI voor de status updates
 #define WAITING_FOR_SETTINGS "WACHT_OP_INSTELLINGEN"
 #define READY_STATUS "GEREED"
 #define TEST_RUNNING "BEZIG_MET_TEST"
@@ -81,13 +82,12 @@ typedef enum {
 #define SPI_TIMEOUT 1000
 #define DAC8564_SEQUENTIANALY_WRITE_UPDATE 0x10
 #define VREF 2.5
-//#define AMPLITUDE 0.7
 #define PI 3.14159265
 #define SAMPLE_RATE 48000
-#define FREQUENCY 50
+#define FREQUENCY 50   //Grondsignaal frequentie
 #define NUM_SAMPLES (SAMPLE_RATE / FREQUENCY)
 #define PHASE_SHIFT_120_DEG (2.0 * PI / 3.0)  // 120-degree phase shift
-#define PHASE_SHIFT_240_DEG (4.0 * PI / 3.0)
+#define PHASE_SHIFT_240_DEG (4.0 * PI / 3.0)  // 240-degree phase shift
 
 
 
@@ -143,16 +143,17 @@ const osThreadAttr_t Active_TASK_attributes = {
 };
 /* USER CODE BEGIN PV */
 
-char receivedData[BUFFER_SIZE];  // Buffer to store received data
+char receivedData[BUFFER_SIZE];  // Buffer om ontvangen gegevens van PC op te slaan
 uint32_t receivedLength = 0;  // Houd de lengte van de ontvangen data bij
 
-
+// Variabelen voor het berekenen van het gewenste simulatiesignaal.
 volatile uint16_t sample_index = 0;
 volatile uint32_t seconds_elapsed = 0;
 volatile uint8_t dac_update_flag = 0;
 volatile uint32_t Timer_counter = 0;
 volatile int current_scenario = 1;
 
+// variabelen om het gewenste simulatie signaal te berekenen.
 float AMPLITUDE;
 
 float HARMONIC_3, HARMONIC_5, HARMONIC_7, HARMONIC_9, HARMONIC_11, HARMONIC_13;
@@ -182,10 +183,12 @@ int thd_s2_3h = 0, thd_s2_5h = 0, thd_s2_7h = 0, thd_s2_9h = 0,
 int thd_s3_3h = 0, thd_s3_5h = 0, thd_s3_7h = 0, thd_s3_9h = 0,
     thd_s3_11h = 0, thd_s3_13h = 0;
 
+// De initiële status bij het aansluiten van de voeding
 TestStatus huidig_status = STATUS_IDLE;
+
 volatile bool usb_busy = false;  // Vlag om aan te geven of USB-communicatie bezig i
 
-volatile bool test_gereed = false;  // Vlag om aan te geven of USB-communicatie bezig i
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -349,7 +352,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
      if ((huidig_status == STATUS_TEST_GESTART && usb_busy == false)  || huidig_status == STATUS_TEST_GEPAUZEERD  || huidig_status == STATUS_TEST_VOLTOOID)
 		{
 			if (!(huidig_status == STATUS_TEST_GEPAUZEERD)) {
-				  // Als de test gepauzeerd is, blijf in deze lus totdat de status verandert
+
 
 
 						Timer_counter++;
@@ -367,7 +370,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 										current_scenario = 6;
 
 									}else {
-//										send_active_scenario_to_gui(current_scenario);
+
 										// Wissel de actieve buffers naar de nieuwe berekende golfvormen
 										current_sine_wave_A = sine_wave_A_scenario[current_scenario - 1];
 										current_sine_wave_B = sine_wave_B_scenario[current_scenario - 1];
@@ -392,7 +395,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 				// Verhoog de sample index
 				sample_index = (sample_index + 1) % NUM_SAMPLES;
 
-			// Verhoog de sample index
 
 
 		}
@@ -460,7 +462,6 @@ void send_active_scenario_to_gui(int scenario_number) {
     sprintf(scenario_message, "ACTIEF_SCENARIO=%d\n", scenario_number);
     send_status_to_gui(scenario_message);  // Verstuur het scenario
 
-
 }
 
 
@@ -469,39 +470,19 @@ void send_status_to_gui(char* status_message) {
 
 }
 
-// Functie om te checken of de knoppen voor starten, pauzeren of stoppen zijn ingedrukt
+
 
 
 // Simuleer de ontvangst van instellingen en stuur statusupdates naar de GUI
 void receive_settings_and_update_status(void) {
-    // Wachten op instellingen
+    // Status wachten op instellingen
 	update_status (STATUS_WACHTEN_OP_INSTELLINGEN);
-//    send_status_to_gui(WAITING_FOR_SETTINGS);
-
-
-    // Simuleer een vertraging voor het ontvangen van instellingen
-
-    // Zodra instellingen zijn ontvangen, stuur de status "Gereed"
 
 }
 
-// Functie om de volledige testprocedure te beheren
-void run_test_procedure(void) {
-    // Start de testprocedure
-
-//	send_status_to_gui(TEST_RUNNING);
-//
-//
-//	    // Eindig met het versturen van de voltooid-status
-//	    send_status_to_gui(TEST_COMPLETED);
-
-
-    // Simuleer het uitvoeren van de test
-
-}
 void CheckReceivedData(void)
 {
-  // Simuleer het ontvangen van data (normaliter via USB/UART)
+  // Check of data is ontvangen.
   if (receivedLength > 0) {
     parse_received_data(receivedData);  // Verwerk de ontvangen gegevens
     memset(receivedData, 0, BUFFER_SIZE);  // Clear de buffer na verwerking
@@ -512,9 +493,7 @@ void CheckReceivedData(void)
 // Functie om de ontvangen data te parsen
 void parse_received_data(char* data)
 {
-    // Verwacht dataformaat: "STROOM_S1=100.000;STROOM_S2=200.000;THD_S1_RMS=50.000;..."
-    // Verwacht dataformaat:
-    // "STROOM_S1=100.000;STROOM_S2=200.000;STROOM_S3=300.000;THD_S1_RMS=50.000;THD_S1_3H=15;...THD_S3_13H=10;"
+
 
     sscanf(data,
            "STROOM_S1=%f;STROOM_S2=%f;STROOM_S3=%f;THD_S1_RMS=%f;THD_S1_3H=%d;THD_S1_5H=%d;"
@@ -525,24 +504,25 @@ void parse_received_data(char* data)
            &thd_s1_rms, &thd_s1_3h, &thd_s1_5h, &thd_s1_7h, &thd_s1_9h, &thd_s1_11h, &thd_s1_13h,
            &thd_s2_rms, &thd_s2_3h, &thd_s2_5h, &thd_s2_7h, &thd_s2_9h, &thd_s2_11h, &thd_s2_13h,
            &thd_s3_rms, &thd_s3_3h, &thd_s3_5h, &thd_s3_7h, &thd_s3_9h, &thd_s3_11h, &thd_s3_13h);
+
+    // Bereken alle gewenste testscenario's
     for (int i = 1; i <= 6; i++) {
         select_test_scenario(i);
     }
 
-    // als je wilt simuleren met grotere amplitudes
-//    test_gereed= true;
     // Zet het eerste scenario klaar
-
     current_sine_wave_A = sine_wave_A_scenario[0];
     current_sine_wave_B = sine_wave_B_scenario[0];
     current_sine_wave_C = sine_wave_C_scenario[0];
     current_scenario = 1;
 
+    // Update status naar gereed
     update_status(STATUS_GEREED);
 
 
 }
 /* USB_GUI_ CODE END*/
+
 
 /* USER CODE END 0 */
 
@@ -586,47 +566,18 @@ int main(void)
   usb_busy = true;
 
   while (!(HAL_GPIO_ReadPin(GPIO_PORT_VBUS, GPIO_PIN_VBUS) == GPIO_PIN_SET));
-  receive_settings_and_update_status();
   HAL_Delay (3000);
-  //send_status_to_gui(WAITING_FOR_SETTINGS);
+  receive_settings_and_update_status();
+
+
 
   HAL_GPIO_WritePin(GPIOB, SPI_SYNC_Pin, GPIO_PIN_SET);
-
-
-
-
-
-
-
   HAL_Delay(150);
   HAL_GPIO_WritePin(GPIOB, SPI_SYNC_Pin, GPIO_PIN_SET);
   HAL_Delay(10);
   SET_refference();
 
-  // om de simuleren met grotere amplitudes
-// while (test_gereed== false)
-// {
-//	 // doe niks wachten tot de user op verzend in stellingen heeft geklikt
-// }
-//
-// stroom_s1 = 10000.0;
-// stroom_s2 = 7500.0;
-// stroom_s3 = 5000.0;
-//
-//// Globale variabelen voor THD scenario's
-//thd_s1_rms = 4000.0, thd_s2_rms =3000.0, thd_s3_rms =2000.0;
-//
-//for (int i = 1; i <= 6; i++) {
-//    select_test_scenario(i);
-//}
-//
-//// Zet het eerste scenario klaar
-//
-//current_sine_wave_A = sine_wave_A_scenario[0];
-//current_sine_wave_B = sine_wave_B_scenario[0];
-//current_sine_wave_C = sine_wave_C_scenario[0];
-//current_scenario = 1;
-//
+
 
 
 
