@@ -346,6 +346,17 @@ void DAC8564_Write(uint16_t channel, uint16_t value) {
     HAL_GPIO_WritePin(GPIOB, SPI_SYNC_Pin, GPIO_PIN_SET);  // CS High
 }
 
+
+void DAC8564_Wake_up(void) {
+
+	uint16_t nul_volt = ((65536 / (2 * VREF)) * (0 + VREF));
+	DAC8564_Write(0, nul_volt);
+	DAC8564_Write(1, nul_volt);
+	DAC8564_Write(2, nul_volt);
+
+}
+
+
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
     if (htim->Instance == TIM2) {
 
@@ -359,7 +370,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 						if (Timer_counter== 48000) {
 								seconds_elapsed++;
 								Timer_counter=0;
-								// Wissel scenario na 120 seconden
+								// Wissel scenario na 12 seconden
 								if (seconds_elapsed >=12) {
 									seconds_elapsed = 0;
 
@@ -562,7 +573,8 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   MX_USB_DEVICE_Init();
-
+  SET_refference();
+  DAC8564_Wake_up();
   usb_busy = true;
 
   while (!(HAL_GPIO_ReadPin(GPIO_PORT_VBUS, GPIO_PIN_VBUS) == GPIO_PIN_SET));
@@ -575,7 +587,7 @@ int main(void)
   HAL_Delay(150);
   HAL_GPIO_WritePin(GPIOB, SPI_SYNC_Pin, GPIO_PIN_SET);
   HAL_Delay(10);
-  SET_refference();
+
 
 
 
